@@ -71,20 +71,97 @@ int release_pid(int p){
 }
 
 int main(){
-    allocate_map();
-    allocate_pid();
-    allocate_pid();
-
-    int s = 0;
     printf("\n-----------------TESTING------------------\n\n");
+
+    printf("\n**Testing Map Allocation function...\n");
+    //map_allocated is used to save the return value of the allocate_function
+    int map_allocated = allocate_map();
+    
+    /*
+        if the return value is 1, then the data structure (array) used was successful
+        otherwise, the map allocation was unsuccessful
+    */
+
+    if (map_allocated == 1){
+        printf("Map Allocation: Successful\n\n");
+    } else {
+        printf("Map Allocation: Unsuccessful\n");
+    }
+
+    printf("\n**Testing PID Allocation function...\n");
+
+    //for loop is used to allocate 2 pids to test if the function words
+    for (int i = 0; i < 2; i++){
+
+        // pid_allocated variable is used to keep track of the return value of allocate_pid function
+        int pid_allocated = allocate_pid();
+
+        /*
+         if the return value is 1, then the pid's have not been allocated since all pid's are in use
+         otherwise, the pid is returned and alloctaion was successful.
+        */
+        if (pid_allocated == 1){
+            printf("All PIDs are currently in use. PID Allocation: Unsuccessful\n\n");
+        } else {
+            printf("PID Allocation: Successful\n");
+        }
+    }
+
+    printf("\nPrinting PIDs Allocated...\n");
+    //int s is used to keep track of the number of pids allocated 
+    int s = 0;
+    //for loop iterates over the array and checks the pid status
     for (int i = 0; i<ARRAY_SIZE; i++){
-        if(PID_array[i] == 1){
+        // if the PID is unavailable (==1), then it is printed with its status
+        if(PID_array[i] == unAvailable){
             printf("[%d] = %d\t", i+300, PID_array[i]);
             s++;
         }
     }
     printf("\n\nNumber of PIDs in Use: %d\n", s);
-    printf("\n----------------END TESTING-----------------\n\n");
 
+    printf("\n**Testing Release PID function...\n");
+    int pid = 301;
+    // run the release function on pid variable
+    release_pid(pid);
+    printf("PID released: %d\n", 301);
+    printf("\nPrinting PIDs Allocated After Release...\n");
+    //int w is used to keep track of the number of pids allocated 
+    int w = 0;
+    //for loop iterates over the array and checks the pid status
+    for (int i = 0; i<ARRAY_SIZE; i++){
+        // if the PID is unavailable (==1), then it is printed with its status
+        if(PID_array[i] == unAvailable){
+            printf("[%d] = %d\t", i+300, PID_array[i]);
+            w++;
+        }
+    }
+    printf("\n\nNumber of PIDs in Use After Release: %d\n", w);
+
+    printf("\n**Testing Unsuccessful case in PID function...\n");
+
+    int p = 0;
+    printf("\nAllocation All PIDs...\n");
+    for (int i = 0; i<ARRAY_SIZE; i++){
+        // pid_allocated variable is used to keep track of the return value of allocate_pid function
+        int pid_allocated = allocate_pid();
+        /*
+         if the return value is 1, then the pid's have not been allocated since all pid's are in use
+         otherwise, the pid is returned and alloctaion was successful.
+        */
+        if (pid_allocated == 1){
+            printf("***Unsuccessful Case Reached***\n");
+            printf("All PIDs are currently in use. PID Allocation: Unsuccessful\n");
+        } else {
+            if(PID_array[i] == unAvailable){
+                p++;
+            }
+        }
+        
+    }
+    printf("\n\nNumber of PIDs in Use: %d\n", p);
+
+    printf("\n----------------TESTING COMPLETED-----------------\n\n");
+ 
     return 0;
 }
