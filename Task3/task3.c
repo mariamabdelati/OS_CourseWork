@@ -106,7 +106,7 @@ int main(int argc, char * argv[]){
         // child reads the content that the parent wrote into pipe
         read(fd[0], readbuffer, sizeof(readbuffer));
 
-        //prints extra characters from pipe
+        //prints extra characters from pipe (not sure how to fix)
         printf("Child: reading from pipe... The content recieved is %s\n", readbuffer); 
 
         printf("The child writes content into target file... \n");
