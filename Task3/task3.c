@@ -93,7 +93,7 @@ int main(int argc, char * argv[]){
 
         while ( (readLines = read(readFile, readbuffer, sizeof(readbuffer))) > 0){
         // parent write the message into pipe, so the child can read it
-        write(fd[1], readbuffer, sizeof(readbuffer));
+        write(fd[1], readbuffer, readLines);
         }
         close(fd[1]);
         // parent waits till the child is done executing
@@ -104,7 +104,7 @@ int main(int argc, char * argv[]){
         close(fd[1]);
 
         // child reads the content that the parent wrote into pipe
-        read(fd[0], readbuffer, sizeof(readbuffer));
+        int readLines_2 = read(fd[0], readbuffer, sizeof(readbuffer));
 
         //prints extra characters from pipe (not sure how to fix)
         printf("Child: reading from pipe... The content recieved is %s\n", readbuffer); 
@@ -112,7 +112,7 @@ int main(int argc, char * argv[]){
         printf("The child writes content into target file... \n");
  
         // write the content into file 2
-        write(writeFile, readbuffer, strlen(readbuffer) + 1);
+        write(writeFile, readbuffer, readLines_2);
     }
 
     return 0;
