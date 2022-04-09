@@ -31,19 +31,38 @@ package Task5.com.company;
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * <h1>MonteCarlo Technique Multithreaded Program</h1>
+ * The program implements threads to calculate the approximate
+ * value of pi
+ * <p>
+ *
+ * @author  Mariam Abdelati
+ * @since   2022-04-08
+ */
 
 class CirclePoints {
-    //Generates a double precision random number
+    // define the global variables to be shared by the threads running on the CirclePoints ob
     public static int npoints = 0; // number of points to be generated
     public static int hit_count = 0; // keeps track of the points that where generated that lie within the circle
-    // initialize random number
+
+    /**
+     * This method is used to generate a random double which is later used to generate
+     * the number of points specified
+     * @returns random double
+     */
     public synchronized static double random_double(){
         Random rand = new Random();
         double random_doub = rand.nextDouble();
         return random_doub;
     }
 
-    // calculates the value of pi
+    /**
+     * This method is used to calculate the value of pi
+     * using the the formula specified by the monte carlo
+     * technique 4 * number of points in the circle (hit count) / total number of points (npoints)
+     * @returns approximated value of pi
+     */
     public synchronized static double calculate(){
         double points = 4.0 * hit_count;
         return points / npoints;
@@ -55,19 +74,32 @@ class GeneratePoints extends Thread {
     public GeneratePoints(CirclePoints x){
         t = x;
     }
+
+    /**
+     * This method is used to generate random points for the specified number of points
+     * The method makes use of the random method and generates two points within the square
+     * The general rule of unit circle is applied where if the coordinates of the circle
+     * lie at the origin (0,0), the distance of any 2 points inside the circle must
+     * be less than one (radius). Thus, if the condition is met then the  points lie
+     * within the circle
+     * The global variable {hit_count} is incremented if the value lies in the circle
+     */
     public void run() {
         //Check for points inside circle
         for (int i = 0; i < CirclePoints.npoints; i++){
-            //generate random numbers between -1.0 and 1.0 (exclusive)
+            // Generate points in a square of side 2 units, from -1 to 1.
             double x = CirclePoints.random_double() * 2.0 - 1.0;
             double y = CirclePoints.random_double() * 2.0 - 1.0;
 
-            if (Math.sqrt(x*x + y*y) < 1.0){
+            // calculate the distance 
+            double pt_distance = x*x + y*y;
+            // if the distance is 1 or less then the point lies on the circle
+            if (pt_distance <= 1.0){
                 CirclePoints.hit_count++;
             }
         }
 
-        System.out.println("The number of points generated using Thread 1 within the circle is: " + CirclePoints.hit_count);
+        System.out.println("The number of points generated within the circle using Thread 1 is: " + CirclePoints.hit_count);
     }
 }
 
@@ -83,15 +115,28 @@ class CalculatePi extends Thread {
 }
 
 public class task5 {
+    /**
+     * This is the main method which makes use of the GeneratePoints Class
+     * defined earlier. First the user inputs the desired number of points
+     * to be generated. The number is set in the global variable {npoints}
+     * for the CirclePoints ob.
+     * The program waits for the generate points thread to complete in order
+     * to calculate the value of pi.
+     * The program prints the value of pi
+     * @param args Unused
+     */
     public static void main(String[] args) {
-        System.out.println("Initializing Threaded Monte Carlo Program");
+
+        System.out.println("Welcome to Stats Calculator");
         Scanner reader = new Scanner(System.in);  // Reading from System.in
         System.out.print("Enter the desired number to generate for the Monte Carlo program: ");
         int n = reader.nextInt(); // Scans the next token of the input as an int.
-        //once finished
+        //once finished close the scanner
         reader.close();
-        //initalized an object that contains the variables to be used by the threads
+
+        //initalize an object that contains the variables to be used by the threads
         CirclePoints ob = new CirclePoints();
+
         //set the npoints to the user defined value
         CirclePoints.npoints = n;
         System.out.println("Number of points to be generated is: " + CirclePoints.npoints);
@@ -103,15 +148,13 @@ public class task5 {
         t1.start();
         try {
             // wait for thread one to finish before running thread 2
-            System.out.println("Waiting for Thread 1 to complete before running Thread 2...");
+            System.out.println("Waiting for Thread 1 to complete before calculating pi...");
             t1.join();
         } catch(InterruptedException e){
             System.out.println(e);
         }
 
-        // create thread two object that takes the object after thread one has completed and calculates the value of pi
-        CalculatePi t2 = new CalculatePi(ob);
-        System.out.println("**Starting Thread 2... Calculating Pi...**");
-        t2.start();
+        // calculate pi value and print it
+        System.out.println("The approximate value of pi for the desired amount of points is: " + CirclePoints.calculate());
     }
 }
