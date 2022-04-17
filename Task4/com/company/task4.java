@@ -228,11 +228,12 @@ public class task4 {
 
         System.out.println("Welcome to Stats Calculator");
 
-        //initalized an object that contains the variables to be used by the threads
-        Calculated obj = new Calculated();
-
         // check if length of args array is greater than 0 so args have been supplied
         if (args.length > 0) {
+
+            //initalized an object that contains the variables to be used by the threads
+            Calculated obj = new Calculated();
+
             // iterate over the args and add to list as integers
             for (int i = 0; i < args.length; i++) {
                 Calculated.array.add(Integer.valueOf(args[i]));
@@ -282,7 +283,7 @@ public class task4 {
             System.out.println("The standard deviation value is: " + String.format("%.2f", Calculated.stddev));
         }
         else{
-            System.out.println("No command line arguments found.");
+            System.out.println("No command line arguments found. Exiting Progam.");
             System.exit(0);
         }
     }

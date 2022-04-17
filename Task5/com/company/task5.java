@@ -29,13 +29,14 @@ number of generated points? Justify your answer.
 
 package Task5.com.company;
 import java.util.Random;
-import java.util.Scanner;
 
 /**
  * <h1>MonteCarlo Technique Multithreaded Program</h1>
  * The program implements threads to calculate the approximate
  * value of pi
  * <p>
+ * <b>Note:</b> The program is to be run from the commandline passing
+ * arguments in a similar format to: java com.company.Main 80000
  *
  * @author  Mariam Abdelati
  * @since   2022-04-08
@@ -103,17 +104,6 @@ class GeneratePoints extends Thread {
     }
 }
 
-class CalculatePi extends Thread {
-    CirclePoints t;
-    public CalculatePi(CirclePoints x){
-        t = x;
-    }
-
-    public void run() {
-        System.out.println("The approximate value of pi for the desired amount of points is: " + CirclePoints.calculate());
-    }
-}
-
 public class task5 {
     /**
      * This is the main method which makes use of the GeneratePoints Class
@@ -123,38 +113,43 @@ public class task5 {
      * The program waits for the generate points thread to complete in order
      * to calculate the value of pi.
      * The program prints the value of pi
-     * @param args Unused
+     * @param args represents the number of points to be generated.
+     *             If no param is provided or more than 1 argument is passed, the program exits.  
      */
     public static void main(String[] args) {
 
-        System.out.println("Welcome to Stats Calculator");
-        Scanner reader = new Scanner(System.in);  // Reading from System.in
-        System.out.print("Enter the desired number to generate for the Monte Carlo program: ");
-        int n = reader.nextInt(); // Scans the next token of the input as an int.
-        //once finished close the scanner
-        reader.close();
+        System.out.println("Welcome to Monte Carlo Program");
 
-        //initalize an object that contains the variables to be used by the threads
-        CirclePoints ob = new CirclePoints();
+        if (args.length == 1) {
+            //initalize an object that contains the variables to be used by the threads
+            CirclePoints ob = new CirclePoints();
 
-        //set the npoints to the user defined value
-        CirclePoints.npoints = n;
-        System.out.println("Number of points to be generated is: " + CirclePoints.npoints);
+            //set the npoints to the user defined value
+            CirclePoints.npoints = Integer.valueOf(args[0]);
+            System.out.println("Number of points to be generated is: " + CirclePoints.npoints);
 
-        //  create thread one object to generate the points
-        GeneratePoints t1 = new GeneratePoints(ob);
-        System.out.println("**Starting Thread 1... Generating Points...**");
-        // starting thread one
-        t1.start();
-        try {
-            // wait for thread one to finish before running thread 2
-            System.out.println("Waiting for Thread 1 to complete before calculating pi...");
-            t1.join();
-        } catch(InterruptedException e){
-            System.out.println(e);
+            //  create thread one object to generate the points
+            GeneratePoints t1 = new GeneratePoints(ob);
+            System.out.println("**Starting Thread 1... Generating Points...**");
+            // starting thread one
+            t1.start();
+            try {
+                // wait for thread one to finish before running thread 2
+                System.out.println("Waiting for Thread 1 to complete before calculating pi...");
+                t1.join();
+            } catch(InterruptedException e){
+                System.out.println(e);
+            }
+
+            // calculate pi value and print it
+            System.out.println("The approximate value of pi for the desired amount of points is: " + CirclePoints.calculate());
+        } else if (args.length > 1){
+            System.out.println("Too many command line arguments found. Only One Needed. Exiting Program.");
+            System.exit(0);
         }
-
-        // calculate pi value and print it
-        System.out.println("The approximate value of pi for the desired amount of points is: " + CirclePoints.calculate());
+        else{
+            System.out.println("No command line arguments found. Exiting Program.");
+            System.exit(0);
+        }
     }
 }
