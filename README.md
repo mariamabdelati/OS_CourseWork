@@ -15,7 +15,7 @@
 - [Task Six](#tasksix)
 
 
-### Task One
+### Task One <a id='taskone'></a>
 A pid manager is a piece of software that is responsible for handling process identifiers. It is responsible for the following points: 
 
 <ol>
@@ -33,12 +33,12 @@ Each created process identifier should be unique, meaning that no two processes 
 
 
 ----
-### Task Two
+### Task Two <a id='tasktwo'></a>
 
 One of the first IPC mechanisms in early UNIX systems were Pipes. Pipes acts as a conduit allowing two processes to communicate, they typically provide one of the simpler ways for processes to communicate with one another. Ordinary pipes are the most common type of pipes. Ordinary pipes allow two processes to communicate in standard producer– consumer fashion: the producer writes to one end of the pipe (the write-end) and the consumer reads from the other end (the read-end). As a result, ordinary pipes are unidirectional, allowing only one-way communication. If two-way communication is required, two pipes must be used, with each pipe sending data in a different direction. Design a program using ordinary pipes such that one process sends a string message to the second process. The second process should then reverse the <u>**case**</u> of each character in the message and sends it back to the first process. As an example, if the first process sends the message *Hi There*, the second process will return *hI tHERE*. This will require using two pipes, one for sending the original message from the first to the second process and the other for sending the modified message from the second to the first process.
 
 ----
-### Task Three
+### Task Three <a id='taskthree'></a>
 
 Create a file-copying program named filecopy using ordinary pipes. This program should receive two parameters: 
 
@@ -52,7 +52,7 @@ filecopy file_to_be_copied.txt copy.txt <br>
 The <b>file file_to_be_copied.txt</b> will be written to the pipe. The child process will read the contents of this file and write it to the destination file <b>copy.txt</b>.
 
 ----
-### Task Four
+### Task Four <a id='taskfour'></a>
 
 Create a multithreaded software that calculates may statistical parameters for a list of numbers. This program will receive a series of numbers on the command line and then creates a five separate worker threads. One thread will determine the average of the numbers, the second will determine the maximum value, and the third will determine the minimum value, the fourth will determine their median and the fifth will determine their standard deviation. As an example, suppose your program is passed the following series of integers: <br>
 80 72 11 25 59 82 99 <br>
@@ -68,7 +68,7 @@ The program should output:
  The variables representing the average, minimum, maximum, median and standard deviation values will be stored globally. The worker threads will set these values, and the parent thread will output the values once the workers have exited.
 
 ----
-### Task Five
+### Task Five <a id='taskfive'></a>
 
 Create a multithreaded program to calculate the value of π using <b><i>MonteCarlo</i> </b>technique. This technique works as follows: Suppose you have a circle inscribed within a square, as shown in the below Figure: <br>
 
@@ -85,7 +85,7 @@ Hence π can be estimated as: <br>
 Hint: You need to create a separate thread that is responsible of generating a number of random points. The thread will count the number of points that occur within the circle and assign that result to a global variable. When this thread has finished, the parent thread will calculate and output the estimated value of π. What will happen when we increase the number of generated points? Justify your answer
 
 ----
-### Task Six
+### Task Six <a id='tasksix'></a>
 
 Assume that for a certain system, it has a 32-bit virtual address with a 4-KB page size. Write a program that takes a virtual address (in decimal) on the command line and outputs the page number and offset for that given address. For example, if we input 19986 to the program, the output would be: <br>
 The address 19986 contains: <br>
