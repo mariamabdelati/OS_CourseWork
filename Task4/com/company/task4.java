@@ -5,25 +5,6 @@ Mariam Abdelaty
 CU2000406
 */
 
-/*
-    Create a multithreaded software that calculates may statistical parameters for a list of
-numbers. This program will receive a series of numbers on the command line and then creates
-a five separate worker threads. One thread will determine the average of the numbers, the
-second will determine the maximum value, and the third will determine the minimum value,
-the fourth will determine their median and the fifth will determine their standard deviation. As
-an example, suppose your program is passed the following series of integers:
-        80 72 11 25 59 82 99
-The program should output:
-    - The average value is 61.14
-    - The minimum value is 11
-    - The maximum value is 99
-    - The median value is 72
-    - The standard deviation value is 29.68
-The variables representing the average, minimum, maximum, median and standard deviation
-values will be stored globally. The worker threads will set these values, and the parent thread
-will output the values once the workers have exited
-*/
-
 package Task4.com.company;
 
 import java.util.ArrayList;
@@ -133,10 +114,7 @@ class Calculated {
 }
 
 class AverageThread extends Thread {
-    Calculated t;
-    public AverageThread(Calculated x){
-        t = x;
-    }
+    public AverageThread(){}
 
     /**
      * This method is used to run the average thread to calculate the average
@@ -149,10 +127,7 @@ class AverageThread extends Thread {
 }
 
 class MinimumThread extends Thread {
-    Calculated t;
-    public MinimumThread(Calculated x){
-        t = x;
-    }
+    public MinimumThread(){}
 
     /**
      * This method is used to run the minimum thread to find the minimum
@@ -165,10 +140,7 @@ class MinimumThread extends Thread {
 }
 
 class MaximumThread extends Thread {
-    Calculated t;
-    public MaximumThread(Calculated x){
-        t = x;
-    }
+    public MaximumThread(){}
 
     /**
      * This method is used to run the maximum thread to find the maximum
@@ -181,10 +153,7 @@ class MaximumThread extends Thread {
 }
 
 class MedianThread extends Thread {
-    Calculated t;
-    public MedianThread(Calculated x){
-        t = x;
-    }
+    public MedianThread(){}
 
     /**
      * This method is used to run the median thread to find the median
@@ -197,10 +166,7 @@ class MedianThread extends Thread {
 }
 
 class StdDevThread extends Thread {
-    Calculated t;
-    public StdDevThread(Calculated x){
-        t = x;
-    }
+    public StdDevThread(){}
 
     /**
      * This method is used to run the standard deviation thread to
@@ -231,9 +197,6 @@ public class task4 {
         // check if length of args array is greater than 0 so args have been supplied
         if (args.length > 0) {
 
-            //initalized an object that contains the variables to be used by the threads
-            Calculated obj = new Calculated();
-
             // iterate over the args and add to list as integers
             for (int i = 0; i < args.length; i++) {
                 Calculated.array.add(Integer.valueOf(args[i]));
@@ -246,11 +209,11 @@ public class task4 {
             }
 
             // intialize the threads
-            AverageThread t1 = new AverageThread(obj);
-            MinimumThread t2 = new MinimumThread(obj);
-            MaximumThread t3 = new MaximumThread(obj);
-            MedianThread t4 = new MedianThread(obj);
-            StdDevThread t5 = new StdDevThread(obj);
+            AverageThread t1 = new AverageThread();
+            MinimumThread t2 = new MinimumThread();
+            MaximumThread t3 = new MaximumThread();
+            MedianThread t4 = new MedianThread();
+            StdDevThread t5 = new StdDevThread();
 
             // start the threads
             t1.start();

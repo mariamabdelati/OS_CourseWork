@@ -1,25 +1,8 @@
 /*
 KH5004CEM Operating Systems and Security
-Task #1
+Task #1: PID manager
 Mariam Abdelaty
 CU2000406
-*/
-
-/*
-A pid manager is a piece of software that is responsible for handling process identifiers.
-It is responsible for the following points:
-    1.Creating and assigning process identifiers to new processes.
-    2.Releasing the process identifier when that process completes execution.
-    3.Reassigning this process identifier to a newly created process.
-
-Each created process identifier should be unique, meaning that no two processes identifiers
-should have the identifiers. You are required to implement the following functions:
-    ✓ int allocate map(void)—Creates and initializes a data structure for representing
-    pids. This function returns -1 if unsuccessful, 1 if successful. You can use any
-    data structure of your choice.
-    ✓ int allocate pid(void)—Allocates and returns a pid. This function should return
-    1 if unable to allocate a pid (all pids are in use).
-    ✓ void release pid(int pid)—Releases a pid.
 */
 
 //IMPORTS
@@ -71,6 +54,7 @@ int release_pid(int p){
 }
 
 int main(){
+    printf("\nWelcome to PID Manager Program\n\n");
     printf("\n-----------------TESTING------------------\n\n");
 
     printf("\n**Testing Map Allocation function...\n");
