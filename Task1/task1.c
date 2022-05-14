@@ -7,9 +7,6 @@ CU2000406
 
 //IMPORTS
 #include<stdio.h> //standard input output
-#include<stdlib.h> //standard library functions
-#include<unistd.h> //unix standard
-#include<sys/wait.h> //for waitpid...
 
 //DEFINING CONSTRAINTS TO PROVIDE A RANGE OF POSSIBLE PID VALUES AND ALLOCATE THEM 
 #define MIN_PID 300
@@ -48,9 +45,23 @@ int allocate_pid(void){
 }
 
 
-int release_pid(int p){
-    int pid = p - 300; //subtract 300 to get the index 
-    PID_array[pid] = 0; //make the pid available again
+void release_pid(int p){
+    // check if the pid supplied is a valid pid
+    if (p > MAX_PID || p < MIN_PID){
+        printf("No PID was released since PID does not exist.\n");
+        return;
+    }
+
+    int pid = p - 300; //subtract 300 to get the index
+
+    // check if the pid is already made available
+    if (PID_array[pid] == available){
+        printf("No PID was released since PID is already available.\n");
+        return;
+    }
+
+    PID_array[pid] = available; //make the pid available again
+    printf("PID released: %d\n", p); // display the released pid
 }
 
 int main(){
@@ -105,10 +116,24 @@ int main(){
     printf("\n\nNumber of PIDs in Use: %d\n", s);
 
     printf("\n**Testing Release PID function...\n");
-    int pid = 301;
+    int pid = 301; // valid pid
+    int pid1 = 5001; // a pid out of upper range
+    int pid2 = 299; // pid out of lower range
+    int pid3 = 4000; // pid that is already available
+
     // run the release function on pid variable
+    printf("\n**Testing with PID %d...\n", pid);
     release_pid(pid);
-    printf("PID released: %d\n", 301);
+
+    printf("\n**Testing with PID %d...\n", pid1);
+    release_pid(pid1);
+
+    printf("\n**Testing with PID %d...\n", pid2);
+    release_pid(pid2);
+
+    printf("\n**Testing with PID %d...\n", pid3);
+    release_pid(pid3);
+
     printf("\nPrinting PIDs Allocated After Release...\n");
     //int w is used to keep track of the number of pids allocated 
     int w = 0;
@@ -124,25 +149,30 @@ int main(){
 
     printf("\n**Testing Unsuccessful case in PID function...\n");
 
-    int p = 0;
-    printf("\nAllocation All PIDs...\n");
+
+    printf("\nAllocating All PIDs...\n");
     for (int i = 0; i<ARRAY_SIZE; i++){
         // pid_allocated variable is used to keep track of the return value of allocate_pid function
         int pid_allocated = allocate_pid();
         /*
          if the return value is 1, then the pid's have not been allocated since all pid's are in use
-         otherwise, the pid is returned and alloctaion was successful.
+         otherwise, the pid is returned and allocatation was successful.
         */
         if (pid_allocated == 1){
             printf("***Unsuccessful Case Reached***\n");
             printf("All PIDs are currently in use. PID Allocation: Unsuccessful\n");
-        } else {
-            if(PID_array[i] == unAvailable){
-                p++;
-            }
         }
-        
     }
+    
+    int p = 0;
+    //for loop iterates over the array and checks the pid status
+    for (int i = 0; i<ARRAY_SIZE; i++){
+        // if the PID is unavailable (==1), counter is incremented
+        if(PID_array[i] == unAvailable){
+            p++;
+        }
+    }
+
     printf("\n\nNumber of PIDs in Use: %d\n", p);
 
     printf("\n----------------TESTING COMPLETED-----------------\n\n");

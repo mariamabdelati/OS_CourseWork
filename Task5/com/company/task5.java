@@ -23,36 +23,17 @@ import java.util.Random;
 
 class CirclePoints {
     // define the global variables to be shared by the threads running on the CirclePoints ob
-    public static int npoints = 0; // number of points to be generated
-    public static int hit_count = 0; // keeps track of the points that where generated that lie within the circle
+    public int npoints = 0; // number of points to be generated
+    public int hit_count = 0; // keeps track of the points that where generated that lie within the circle
 
     /**
      * This method is used to generate a random double which is later used to generate
      * the number of points specified
      * @returns random double
      */
-    public synchronized static double random_double(){
+    public static double random_double(){
         Random rand = new Random();
-        double random_doub = rand.nextDouble();
-        return random_doub;
-    }
-
-    /**
-     * This method is used to calculate the value of pi
-     * using the the formula specified by the monte carlo
-     * technique 4 * number of points in the circle (hit count) / total number of points (npoints)
-     * @returns approximated value of pi
-     */
-    public synchronized static double calculate(){
-        double points = 4.0 * hit_count;
-        return points / npoints;
-    }
-}
-
-class GeneratePoints extends Thread {
-    CirclePoints t;
-    public GeneratePoints(CirclePoints x){
-        t = x;
+        return rand.nextDouble();
     }
 
     /**
@@ -64,71 +45,109 @@ class GeneratePoints extends Thread {
      * within the circle
      * The global variable {hit_count} is incremented if the value lies in the circle
      */
-    public void run() {
+    public void calculateCirclePoints(){
         //Check for points inside circle
-        for (int i = 0; i < CirclePoints.npoints; i++){
-            // Generate points in a square of side 2 units, from -1 to 1.
-            double x = CirclePoints.random_double() * 2.0 - 1.0;
-            double y = CirclePoints.random_double() * 2.0 - 1.0;
+        for (int i = 0; i < npoints; i++){
+            // Generate points in a square of side 2 units, from -1 to 1 exclusive.
+            double x = random_double() * 2.0 - 1.0;
+            double y = random_double() * 2.0 - 1.0;
 
-            // calculate the distance 
+            // calculate the distance
             double pt_distance = x*x + y*y;
-            // if the distance is 1 or less then the point lies on the circle
-            if (pt_distance <= 1.0){
-                CirclePoints.hit_count++;
+            // if the distance is less than 1, the point lies inside the circle
+            if (pt_distance < 1.0){
+                hit_count++;
             }
         }
+    }
 
-        System.out.println("The number of points generated within the circle using Thread 1 is: " + CirclePoints.hit_count);
+    /**
+     * This method is used to calculate the value of pi
+     * using the formula specified by the problem statement
+     * 4 * number of points in the circle (hit count) / total number of points (npoints)
+     * @returns approximated value of pi
+     */
+    public double calculatePi(){
+        return 4.0 * hit_count / npoints;
+    }
+}
+
+class GeneratePoints extends Thread {
+    CirclePoints obj;
+    public GeneratePoints(CirclePoints x){
+        obj = x;
+    }
+
+
+    /**
+     * This method is used to run the point generation thread to generate
+     * random points and determine the hit count (points lying within the circle)
+     * using the method defined for the object of type circlePoints
+     */
+    public void run() {
+        obj.calculateCirclePoints();
+        System.out.println("The number of points generated within " +
+                "the circle using Thread 1 is: " + obj.hit_count);
     }
 }
 
 public class task5 {
     /**
      * This is the main method which makes use of the GeneratePoints Class
-     * defined earlier. First the user inputs the desired number of points
-     * to be generated. The number is set in the global variable {npoints}
-     * for the CirclePoints ob.
+     * defined earlier. The desired number of points to be generated is passed
+     * as a commandline argument. The number is set in the global variable {npoints}
+     * for the CirclePoints obj.
      * The program waits for the generate points thread to complete in order
      * to calculate the value of pi.
      * The program prints the value of pi
      * @param args represents the number of points to be generated.
-     *             If no param is provided or more than 1 argument is passed, the program exits.  
+     *             If no param is provided or more than 1 argument is passed, the program exits.
      */
     public static void main(String[] args) {
 
         System.out.println("Welcome to Monte Carlo Program");
 
-        if (args.length == 1) {
-            //initalize an object that contains the variables to be used by the threads
-            CirclePoints ob = new CirclePoints();
-
-            //set the npoints to the user defined value
-            CirclePoints.npoints = Integer.valueOf(args[0]);
-            System.out.println("Number of points to be generated is: " + CirclePoints.npoints);
-
-            //  create thread one object to generate the points
-            GeneratePoints t1 = new GeneratePoints(ob);
-            System.out.println("**Starting Thread 1... Generating Points...**");
-            // starting thread one
-            t1.start();
-            try {
-                // wait for thread one to finish before running thread 2
-                System.out.println("Waiting for Thread 1 to complete before calculating pi...");
-                t1.join();
-            } catch(InterruptedException e){
-                System.out.println(e);
-            }
-
-            // calculate pi value and print it
-            System.out.println("The approximate value of pi for the desired amount of points is: " + CirclePoints.calculate());
-        } else if (args.length > 1){
+        if (args.length > 1){
             System.out.println("Too many command line arguments found. Only One Needed. Exiting Program.");
             System.exit(0);
         }
-        else{
+        else if (args.length < 1){
             System.out.println("No command line arguments found. Exiting Program.");
             System.exit(0);
+        }
+        else {
+            //initalized an object that contains the variables to be used by the thread
+            CirclePoints obj = new CirclePoints();
+
+            //set the npoints to the user defined value
+            try {
+                obj.npoints = Integer.parseInt(args[0]);
+
+            // exit the program if string cannot be parsed to int
+            } catch (NumberFormatException e){
+                System.out.println("The input type cannot be parsed to integer. Please enter a valid number.");
+                System.exit(0);
+            }
+            System.out.println("Number of points to be generated is: " + obj.npoints);
+
+
+            //  create thread one object to generate the points
+            GeneratePoints t1 = new GeneratePoints(obj);
+
+            System.out.println("**Starting Thread 1... Generating Points...**");
+            // starting thread one
+            t1.start();
+
+            try {
+                // wait for thread one to finish before calculating the value of pi
+                System.out.println("Waiting for Thread 1 to complete before calculating pi...");
+                t1.join();
+
+            } catch(InterruptedException e){
+                System.out.println(e);
+            }
+            // calculate pi value and print it
+            System.out.println("The approximate value of pi for the desired amount of points is: " + obj.calculatePi());
         }
     }
 }

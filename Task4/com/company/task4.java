@@ -25,22 +25,21 @@ import java.util.Collections;
 
 class Calculated {
     // define the global variables to be shared by the threads running on the Calculated obj
-    public static ArrayList<Integer> array = new ArrayList<>(); // holds the list of integeres inputted
-    public static double avg = 0.0; // holds the average value
-    public static int minValue = 0; // holds the min value
-    public static int maxValue = 0; // holds the max value
-    public static int medianValue = 0; // holds the median value
-    public static double stddev = 0; // holds the standard dev value
+    public ArrayList<Integer> array = new ArrayList<>(); // holds the list of integeres inputted
+    public double avg = 0.0; // holds the average value
+    public int minValue = 0; // holds the min value
+    public int maxValue = 0; // holds the max value
+    public int medianValue = 0; // holds the median value
+    public double stddev = 0; // holds the standard dev value
 
     /**
      * This method is used to calculate the average of the list elements
      * by calculating the sum of all elements in the list then dividing it by the total
      * The method sets the calculated value to the global variable {avg} of the class
-     * @param param the array list taken from the commandline
+     // @param param the array list taken from the commandline
      */
-    public synchronized static void average(ArrayList<Integer> param){
+    public void average(){
         double sum = 0.0;
-        array = param;
 
         for(int i = 0; i< array.size(); i++){
             sum += array.get(i);
@@ -52,10 +51,10 @@ class Calculated {
      * This method is used to find the minimum in the list elements supplied
      * by iterating through the list and comparing the value to the current minimum
      * The method sets the calculated value to the global variable {minValue} of the class
-     * @param param the array list taken from the commandline
+     //* @param param the array list taken from the commandline
      */
-    public synchronized static void minimum(ArrayList<Integer> param){
-        array = param;
+    public void minimum(){
+
         minValue = array.get(0);
 
         for(int i = 0; i< array.size(); i++){
@@ -68,10 +67,10 @@ class Calculated {
      * This method is used to find the maximum in the list elements supplied
      * by iterating through the list and comparing the value to the current maximum
      * The method sets the calculated value to the global variable {maxValue} of the class
-     * @param param the array list taken from the commandline
+     //* @param param the array list taken from the commandline
      */
-    public synchronized static void maximum(ArrayList<Integer> param){
-        array = param;
+    public void maximum(){
+
         maxValue = array.get(0);
 
         for(int i = 0; i< array.size(); i++){
@@ -85,10 +84,10 @@ class Calculated {
      * This method is used to find the median in the list elements supplied
      * by first sorting the arraylist then finding the midpoint and getting the value at that index
      * The method sets the calculated value to the global variable {medianValue} of the class
-     * @param param the array list taken from the commandline
+     //* @param param the array list taken from the commandline
      */
-    public synchronized static void median(ArrayList<Integer> param){
-        array = param;
+    public void median(){
+
         Collections.sort(array);
 
         int mid = array.size()/2;
@@ -101,10 +100,10 @@ class Calculated {
      * value from the mean) then sets the standard deviation to the square root of the variance
      * (sum of squares over the array size)
      * The method sets the calculated value to the global variable {stddev} of the class
-     * @param param the array list taken from the commandline
+     //* @param param the array list taken from the commandline
      */
-    public synchronized static void strdev(ArrayList<Integer> param){
-        array = param;
+    public void strdev(){
+
         double temp = 0.0;
         for(int i = 0; i< array.size(); i++){
             temp = temp + Math.pow(array.get(i) - avg, 2);
@@ -114,7 +113,10 @@ class Calculated {
 }
 
 class AverageThread extends Thread {
-    public AverageThread(){}
+    Calculated t;
+    public AverageThread(Calculated x){
+        t = x;
+    }
 
     /**
      * This method is used to run the average thread to calculate the average
@@ -122,12 +124,15 @@ class AverageThread extends Thread {
      */
     public void run() {
         System.out.println("\nSetting the Average...");
-        Calculated.average(Calculated.array);
+        t.average();
     }
 }
 
 class MinimumThread extends Thread {
-    public MinimumThread(){}
+    Calculated t;
+    public MinimumThread(Calculated x){
+        t = x;
+    }
 
     /**
      * This method is used to run the minimum thread to find the minimum
@@ -135,12 +140,15 @@ class MinimumThread extends Thread {
      */
     public void run() {
         System.out.println("Setting the Minimum Value...");
-        Calculated.minimum(Calculated.array);
+        t.minimum();
     }
 }
 
 class MaximumThread extends Thread {
-    public MaximumThread(){}
+    Calculated t;
+    public MaximumThread(Calculated x){
+        t = x;
+    }
 
     /**
      * This method is used to run the maximum thread to find the maximum
@@ -148,12 +156,15 @@ class MaximumThread extends Thread {
      */
     public void run() {
         System.out.println("Setting the Maximum Value...");
-        Calculated.maximum(Calculated.array);
+        t.maximum();
     }
 }
 
 class MedianThread extends Thread {
-    public MedianThread(){}
+    Calculated t;
+    public MedianThread(Calculated x){
+        t = x;
+    }
 
     /**
      * This method is used to run the median thread to find the median
@@ -161,12 +172,15 @@ class MedianThread extends Thread {
      */
     public void run() {
         System.out.println("Setting the Median Value...");
-        Calculated.median(Calculated.array);
+        t.median();
     }
 }
 
 class StdDevThread extends Thread {
-    public StdDevThread(){}
+    Calculated t;
+    public StdDevThread(Calculated x){
+        t = x;
+    }
 
     /**
      * This method is used to run the standard deviation thread to
@@ -175,7 +189,7 @@ class StdDevThread extends Thread {
      */
     public void run() {
         System.out.println("Setting the Standard Deviation Value...\n");
-        Calculated.strdev(Calculated.array);
+        t.strdev();
     }
 }
 
@@ -194,29 +208,37 @@ public class task4 {
 
         System.out.println("Welcome to Stats Calculator");
 
+        //initalized an object that contains the variables to be used by the threads
+        Calculated obj = new Calculated();
+
         // check if length of args array is greater than 0 so args have been supplied
         if (args.length > 0) {
-
             // iterate over the args and add to list as integers
             for (int i = 0; i < args.length; i++) {
-                Calculated.array.add(Integer.valueOf(args[i]));
+                try {
+                    obj.array.add(Integer.valueOf(args[i]));
+                } catch (NumberFormatException e){
+                    System.out.println("The input type cannot be parsed to integer. Please enter a valid number.");
+                }
             }
 
             // print the array recieved to ensure correct input
             System.out.print("The Array received is: ");
-            for ( int x : Calculated.array){
+            for ( int x : obj.array){
                 System.out.print(x + " ");
             }
 
             // intialize the threads
-            AverageThread t1 = new AverageThread();
-            MinimumThread t2 = new MinimumThread();
-            MaximumThread t3 = new MaximumThread();
-            MedianThread t4 = new MedianThread();
-            StdDevThread t5 = new StdDevThread();
+            AverageThread t1 = new AverageThread(obj);
+            MinimumThread t2 = new MinimumThread(obj);
+            MaximumThread t3 = new MaximumThread(obj);
+            MedianThread t4 = new MedianThread(obj);
+            StdDevThread t5 = new StdDevThread(obj);
 
             // start the threads
+
             t1.start();
+
             t2.start();
             t3.start();
             t4.start();
@@ -239,14 +261,14 @@ public class task4 {
             } catch(InterruptedException e){
                 System.out.println(e);
             }
-            System.out.println("The average value is: " + String.format("%.2f", Calculated.avg));
-            System.out.println("The minimum value is: " + Calculated.minValue);
-            System.out.println("The maximum value is: " + Calculated.maxValue);
-            System.out.println("The median value is: " + Calculated.medianValue);
-            System.out.println("The standard deviation value is: " + String.format("%.2f", Calculated.stddev));
+            System.out.println("The average value is: " + String.format("%.2f", obj.avg));
+            System.out.println("The minimum value is: " + obj.minValue);
+            System.out.println("The maximum value is: " + obj.maxValue);
+            System.out.println("The median value is: " + obj.medianValue);
+            System.out.println("The standard deviation value is: " + String.format("%.2f", obj.stddev));
         }
         else{
-            System.out.println("No command line arguments found. Exiting Progam.");
+            System.out.println("No command line arguments found.");
             System.exit(0);
         }
     }
