@@ -30,10 +30,10 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    // if the input cannot be parsed to int exit the program
+    // if the input cannot be parsed to an unsigned int exit the program
     for (int i = 0; i < strlen(argv[1]); i++){
         if (!isdigit(argv[1][i])){
-            printf("The input type cannot be parsed to integer. Please enter a valid integer. \n");
+            printf("The input type cannot be parsed to a positive integer. Please enter a valid integer. \n");
             exit(1);
         }
     }
