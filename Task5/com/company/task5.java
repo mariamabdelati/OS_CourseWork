@@ -121,11 +121,11 @@ public class task5 {
 
             //set the npoints to the user defined value
             try {
-                obj.npoints = Integer.parseInt(args[0]);
+                obj.npoints = Integer.parseUnsignedInt(args[0]);
 
-            // exit the program if string cannot be parsed to int
+            // exit the program if string cannot be parsed to an unsigned int (cannot generate negative points)
             } catch (NumberFormatException e){
-                System.out.println("The input type cannot be parsed to integer. Please enter a valid number.");
+                System.out.println("The input type cannot be parsed to a positive integer. Please enter a valid number.");
                 System.exit(0);
             }
             System.out.println("Number of points to be generated is: " + obj.npoints);
